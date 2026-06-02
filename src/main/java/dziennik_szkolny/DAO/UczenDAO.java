@@ -1,14 +1,34 @@
-package DAO;
+package dziennik_szkolny.DAO;
 
-import models.Uczen;
+import dziennik_szkolny.models.Uczen;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
 
 public class UczenDAO {
     private static final String url =  "jdbc:sqlite:dziennik.db";
+
+    public static boolean logowanieUczen(String email, String haslo){
+        String sqlLog = "select haslo from uczen where email = ?";
+        try(
+                Connection con = DriverManager.getConnection(url);
+                PreparedStatement pstmt = con.prepareStatement(sqlLog)
+        ){
+            pstmt.setString(1, email);
+            ResultSet rs = pstmt.executeQuery();
+            if(rs.next()){
+                String hashHaslo = rs.getString("haslo");
+                return BCrypt.checkpw(haslo, hashHaslo);
+            }
+            return false;
+
+        }catch(Exception e){
+            System.out.println("Błąd połączenia z bazą: " + e.getMessage());
+            return false;
+        }
+    }
     public List<Uczen> wszyscyUczniowie(){
         List<Uczen> uczniowie = new ArrayList<>();
         String sql = "select * from uczen";

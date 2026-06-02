@@ -2,8 +2,11 @@ module com.example.dziennik_szkolny {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.sql;
+    requires jbcrypt;
 
 
-    opens com.example.dziennik_szkolny to javafx.fxml;
-    exports com.example.dziennik_szkolny;
+    opens dziennik_szkolny to javafx.fxml;
+    exports dziennik_szkolny;
+    opens dziennik_szkolny.controllers to javafx.fxml;
+    exports dziennik_szkolny.controllers;
 }

@@ -1,4 +1,4 @@
-package models;
+package dziennik_szkolny.models;
 
 public class Uczen {
     private int id_ucznia;

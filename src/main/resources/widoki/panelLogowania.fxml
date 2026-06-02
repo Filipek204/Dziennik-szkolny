@@ -10,10 +10,10 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<StackPane prefHeight="508.0" prefWidth="700.0" style="-fx-background-color: linear-gradient(to bottom right, #4facfe, #00f2fe);" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1">
+<StackPane prefHeight="508.0" prefWidth="700.0" styleClass="tlo" stylesheets="@../style/main.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dziennik_szkolny.controllers.LogowanieController">
  <children>
 
-      <VBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="370.0" prefWidth="350.0" spacing="12.0" style="-fx-background-color: rgba(255,255,255, 0.5); -fx-background-radius: 15; -fx-border-color: rgba(255,255,255, 0.6); -fx-border-radius: 15;">
+      <VBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="370.0" prefWidth="350.0" spacing="12.0" style="-fx-background-color: rgba(255, 255, 255, 0.4);" styleClass="szklany-panel" stylesheets="@../style/main.css">
           <padding>
               <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
           </padding>
@@ -22,7 +22,7 @@
               <DropShadow color="#00000033" height="30.0" radius="14.5" width="30.0" />
           </effect>
          <children>
-              <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Dziennik Szkolny" textFill="#333333">
+              <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="EduStrefa" textFill="#333333">
                   <font>
                       <Font name="System Bold" size="24.0" />
                   </font>
@@ -33,16 +33,16 @@
                       <Font name="System Bold" size="12.0" />
                   </font>
               </Label>
-              <TextField promptText="np. jan.kowalski@szkola.pl" style="-fx-background-color: #f8f9fa; -fx-border-color: #e0e0e0; -fx-border-radius: 5; -fx-background-radius: 5; -fx-padding: 8;" />
+              <TextField fx:id="poleEmail" promptText="np. jan.kowalski@szkola.pl" style="-fx-background-color: #f8f9fa; -fx-border-color: #e0e0e0; -fx-border-radius: 5; -fx-background-radius: 5; -fx-padding: 8;" />
       
               <Label text="Hasło" textFill="#555555">
                   <font>
                       <Font name="System Bold" size="12.0" />
                   </font>
               </Label>
-              <PasswordField promptText="••••••••" style="-fx-background-color: #f8f9fa; -fx-border-color: #e0e0e0; -fx-border-radius: 5; -fx-background-radius: 5; -fx-padding: 8;" />
+              <PasswordField fx:id="poleHaslo" promptText="••••••••" style="-fx-background-color: #f8f9fa; -fx-border-color: #e0e0e0; -fx-border-radius: 5; -fx-background-radius: 5; -fx-padding: 8;" />
       
-              <Button maxWidth="1.7976931348623157E308" prefHeight="40.0" style="-fx-background-color: #007bff; -fx-text-fill: white; -fx-background-radius: 5; -fx-cursor: hand;" text="Zaloguj się">
+              <Button fx:id="zalogujbtn" maxWidth="1.7976931348623157E308" onAction="#zaloguj" prefHeight="40.0" style="-fx-background-color: #007bff; -fx-text-fill: white; -fx-background-radius: 5; -fx-cursor: hand;" text="Zaloguj się">
                   <font>
                       <Font name="System Bold" size="14.0" />
                   </font>

@@ -13,7 +13,7 @@
 <StackPane prefHeight="508.0" prefWidth="700.0" styleClass="tlo" stylesheets="@../style/main.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dziennik_szkolny.controllers.LogowanieController">
  <children>
 
-      <VBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="370.0" prefWidth="350.0" spacing="12.0" style="-fx-background-color: rgba(255, 255, 255, 0.4);" styleClass="szklany-panel" stylesheets="@../style/main.css">
+      <VBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="370.0" prefWidth="350.0" spacing="12.0" styleClass="szklany-panel" stylesheets="@../style/main.css">
           <padding>
               <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
           </padding>
@@ -22,7 +22,7 @@
               <DropShadow color="#00000033" height="30.0" radius="14.5" width="30.0" />
           </effect>
          <children>
-              <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="EduStrefa" textFill="#333333">
+              <Label alignment="CENTER" styleClass="tytul-logowanie" maxWidth="1.7976931348623157E308" text="EduStrefa" textFill="#333333">
                   <font>
                       <Font name="System Bold" size="24.0" />
                   </font>

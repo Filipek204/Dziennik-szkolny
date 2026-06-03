@@ -1,42 +1,142 @@
 .tlo {
-    -fx-background-color:linear-gradient(to bottom right, #4facfe, #00f2fe); ;
+    -fx-background-color:linear-gradient(to bottom right, #F4F5D5, #E6F0FF, #CAE8CA); ;
     -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
 }
 
+.tytul-logowanie {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2B2D42; /* Ciemny, elegancki grafit */
+    -fx-padding: 0 0 20px 0; /* Odstęp od spodu, żeby nie przyklejał się do "Adres e-mail" */
+}
 
  .szklany-panel {
-     -fx-background-color: rgba(255, 255, 255, 0.65); /* Lekko bielsze, żeby tekst ocen był czytelny */
+     -fx-background-color: rgb(237, 237, 237);
      -fx-background-radius: 15;
      -fx-border-color: rgba(255, 255, 255, 0.8);
      -fx-border-radius: 15;
 
  }
-
- /* Przezroczyste przyciski w menu bocznym */
- .szklany-przycisk {
-     -fx-background-color: transparent;
-     -fx-text-fill: #333333;
-     -fx-font-size: 15px;
-     -fx-font-weight: bold;
-     -fx-alignment: center-left;
-     -fx-padding: 12px 20px;
-     -fx-background-radius: 10;
-     -fx-cursor: hand;
+ .brak-lbl{
+    -fx-text-fill: #6C757D;
+    -fx-font-size: 14px;
  }
+/* Tło całej aplikacji (biała baza) */
+.root-pane {
+    -fx-background-color: #FFFFFF;
+    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+}
 
- .szklany-przycisk:hover {
-     -fx-background-color: rgba(255, 255, 255, 0.5);
- }
+/* --- MENU BOCZNE --- */
+.sidebar {
+    -fx-background-color: #FFFFFF;
+}
 
- /* Czerwony przycisk wylogowania (też w stylu glass) */
- .wyloguj-btn {
-     -fx-background-color: rgba(220, 53, 69, 0.8);
-     -fx-text-fill: white;
-     -fx-font-weight: bold;
-     -fx-background-radius: 10;
-     -fx-cursor: hand;
- }
+.logo-text {
+    -fx-font-size: 26px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #2B2D42; /* Ciemny grafitowy */
+}
 
- .wyloguj-btn:hover {
-     -fx-background-color: rgba(220, 53, 69, 1.0);
- }}
+/* Zwykłe przyciski nawigacyjne */
+.nav-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #6C757D; /* Szary tekst */
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-alignment: center-left; /* Wyrównanie do lewej */
+    -fx-padding: 12px 20px;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+}
+
+/* Efekt najechania myszką na zwykły przycisk */
+.nav-button:hover {
+    -fx-background-color: #F8F9FA;
+    -fx-text-fill: #2B2D42;
+}
+
+/* Klasa dla "aktywnej" zakładki (żeby uczeń wiedział, gdzie jest) */
+.active-nav {
+    -fx-background-color: #EDF2F7;
+    -fx-text-fill: #4361EE; /* Nowoczesny, chabrowy akcent */
+}
+
+/* Przycisk Wyloguj */
+.logout-button {
+    -fx-background-color: #E63946; /* Zgaszony, elegancki czerwony */
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-padding: 12px 20px;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+}
+
+.logout-button:hover {
+    -fx-background-color: #D62828; /* Ciemniejszy czerwony po najechaniu */
+}
+
+/* --- GŁÓWNA TREŚĆ --- */
+.content-area {
+    -fx-background-color: #F4F7F6; /* Jasnoszary kolor tła */
+    /* Magia: zaokrąglamy tylko górny-lewy i dolny-lewy róg (dokładnie jak na Twoim screenie!) */
+    -fx-background-radius: 25px 0px 0px 25px;
+}
+
+.header-text {
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2B2D42;
+}
+/* --- KAFELKI Z OCENAMI --- */
+
+/* Główny kontener karty */
+.karta-oceny {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 10px;
+    -fx-padding: 15px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 2);
+}
+
+/* Nagłówek karty (zawsze widoczny) */
+.ocena-naglowek {
+    -fx-cursor: hand;
+}
+
+/* Tekst z nazwą przedmiotu */
+.przedmiot-lbl {
+    -fx-font-weight: bold;
+    -fx-font-size: 16px;
+    -fx-text-fill: #2B2D42;
+    -fx-min-width: 150px;
+}
+
+/* Skrócony podgląd ocen ("5, 4, 3") */
+.oceny-lbl {
+    -fx-font-size: 14px;
+    -fx-text-fill: #6C757D;
+}
+
+/* Wyróżniony kafelek ze średnią */
+.srednia-lbl{
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-text-fill: #4361EE;
+    -fx-background-color: #EDF2F7;
+    -fx-padding: 6px 12px;
+    -fx-background-radius: 6px;
+}
+
+/* Sekcja z detalami (rozwijana w dół) */
+.szczegoly {
+    -fx-padding: 15px 0px 0px 10px;
+    -fx-border-color: transparent transparent transparent #E0E0E0;
+    -fx-border-width: 0 0 0 3px;
+}
+
+/* Pojedyncza linijka z opisem oceny */
+.detale-lbl {
+    -fx-font-size: 13px;
+    -fx-text-fill: #495057;
+}

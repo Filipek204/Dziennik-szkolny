@@ -27,10 +27,11 @@ public class LogowanieController {
                 javafx.fxml.FXMLLoader fxmlLoader = new javafx.fxml.FXMLLoader(getClass().getResource("/widoki/panelUcznia.fxml"));
                 javafx.scene.Parent root = fxmlLoader.load();
 
+                PanelUczniaController uczenController = fxmlLoader.getController();
+                uczenController.zaloguj(email);
                 javafx.stage.Stage stage = (javafx.stage.Stage) zalogujbtn.getScene().getWindow();
 
                 stage.setScene(new javafx.scene.Scene(root));
-                stage.setTitle("Dziennik Szkolny - Panel Ucznia");
 
             } catch (Exception e) {
                 System.out.println("Ups! Błąd przy ładowaniu okna: " + e.getMessage());

@@ -13,7 +13,7 @@ public class PrzedmiotDAO {
     private static final String url = "jdbc:sqlite:dziennik.db";
     public static List<Przedmiot> getPrzedmioty(String email){
         List<Przedmiot> przedmioty = new ArrayList<>();
-        String sql ="select p.nazwa as przedmiot, n.imie, n.nazwisko from uczen u join klasa using(id_klasy) join nauczyciel_przedmiot_klasa using(id_klasy) join przedmiot p using(id_przedmiotu) join nauczyciel n using(id_nauczyciela) where u.email =? order by p.nazwa";
+        String sql ="select p.nazwa as przedmiot, n.imie, n.nazwisko from uczen u join klasa using(id_klasy) join nauczyciel_przedmiot_klasa npk using(id_klasy) join przedmiot p using(id_przedmiotu) join nauczyciel n on n.id_nauczyciela = npk.id_nauczyciela  where u.email =? order by p.nazwa";
 
 
         try(Connection conn = DriverManager.getConnection(url);

@@ -140,3 +140,144 @@
     -fx-font-size: 13px;
     -fx-text-fill: #495057;
 }
+
+.wychowawca{
+    -fx-border-color: #4361EE;
+    -fx-border-width: 0 0 0 4px;
+    -fx-background-color: #F8F9FA;
+}
+
+/* --- ZAKŁADKA: MOJE DANE (PROFIL) --- */
+
+.profil-karta {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 15px;
+    -fx-padding: 40px 50px; /* Zwiększony padding (góra/dół i lewo/prawo) */
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 2);
+    -fx-max-width: 800px; /* Znacznie szersza karta */
+}
+
+.profil-imie {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2B2D42;
+}
+
+.profil-klasa {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #4361EE;
+    -fx-background-color: #EDF2F7;
+    -fx-padding: 5px 15px;
+    -fx-background-radius: 15px;
+}
+
+.profil-przerwa {
+    -fx-stroke: #E0E0E0;
+}
+
+.profil-napis {
+    -fx-font-size: 14px;
+    -fx-text-fill: #6C757D;
+    -fx-min-width: 120px;
+}
+
+.profil-wartosc {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2B2D42;
+}
+/* --- ZAKŁADKA: LISTA KLAS I PRZEDMIOTÓW (NAUCZYCIEL) --- */
+
+.klasy-brak-danych {
+    -fx-text-fill: #6C757D;
+    -fx-font-size: 14px;
+}
+
+.karta-klasy {
+    -fx-cursor: hand;
+    -fx-padding: 20px;
+}
+
+.karta-klasy-tytul {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2B2D42;
+}
+
+.przycisk-przedmiot {
+    -fx-background-color: #4361EE;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5px;
+    -fx-padding: 8px 15px;
+    -fx-cursor: hand;
+}
+
+/* Efekt najechania myszką na przedmiot */
+.przycisk-przedmiot:hover {
+    -fx-background-color: #324fc2;
+}
+
+.przycisk-wstecz {
+    -fx-background-color: transparent;
+    -fx-text-fill: #6C757D;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-padding: 0 0 20px 0;
+}
+
+/* Efekt najechania myszką na przycisk powrotu */
+.przycisk-wstecz:hover {
+    -fx-text-fill: #4361EE;
+}
+
+.dziennik-placeholder {
+    -fx-font-size: 16px;
+    -fx-text-fill: #2B2D42;
+}
+/* --- WIDOK DZIENNIKA (PASKI UCZNIÓW) --- */
+
+.wiersz-ucznia {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 10px;
+    -fx-padding: 15px 20px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.03), 5, 0, 0, 2);
+    -fx-margin-bottom: 10px;
+}
+
+.wiersz-dane {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2B2D42;
+}
+
+.kafelek-oceny {
+    -fx-background-color: #EDF2F7;
+    -fx-text-fill: #4361EE;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 5px 12px;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+    -fx-border-color: transparent;
+}
+
+.kafelek-oceny:hover {
+    -fx-background-color: #E2E8F0;
+    -fx-text-fill: #324fc2;
+}
+
+.przycisk-dodaj-ocene {
+    -fx-background-color: #10B981; /* Ładny, zielony kolor */
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5px;
+    -fx-padding: 8px 15px;
+    -fx-cursor: hand;
+}
+
+.przycisk-dodaj-ocene:hover {
+    -fx-background-color: #059669;
+}

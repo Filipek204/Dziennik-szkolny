@@ -1,9 +1,13 @@
 package dziennik_szkolny.controllers;
 
+import dziennik_szkolny.DAO.NauczycielDAO;
 import dziennik_szkolny.DAO.OcenaDAO;
 import dziennik_szkolny.DAO.PrzedmiotDAO;
+import dziennik_szkolny.DAO.UczenDAO;
+import dziennik_szkolny.models.Nauczyciel;
 import dziennik_szkolny.models.Ocena;
 import dziennik_szkolny.models.Przedmiot;
+import dziennik_szkolny.models.Uczen;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -12,10 +16,12 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
@@ -32,6 +38,14 @@ public class PanelUczniaController {
     private VBox kontenerOcen;
     @FXML
     private Button wylogujbtn;
+    @FXML
+    private Button oceny;
+    @FXML
+    private Button przedmioty;
+    @FXML
+    private Button nauczyciele;
+    @FXML
+    private Button mojeDane;
     @FXML
     private void wyloguj(){
         try{
@@ -52,6 +66,10 @@ public class PanelUczniaController {
     @FXML
     public void pokazOceny(){
         powitanieLabel.setText("Witaj "+zalogowanyEmail+"!");
+        oceny.getStyleClass().add("active-nav");
+        przedmioty.getStyleClass().removeAll("active-nav");
+        nauczyciele.getStyleClass().removeAll("active-nav");
+        mojeDane.getStyleClass().removeAll("active-nav");
 
         kontenerOcen.getChildren().clear();
 
@@ -131,6 +149,10 @@ public class PanelUczniaController {
     }
 
     public void pokazPrzedmioty(){
+        oceny.getStyleClass().removeAll("active-nav");
+        przedmioty.getStyleClass().add("active-nav");
+        nauczyciele.getStyleClass().removeAll("active-nav");
+        mojeDane.getStyleClass().removeAll("active-nav");
         powitanieLabel.setText("Twoje przedmioty");
         kontenerOcen.getChildren().clear();
         List<Przedmiot> przedmioty = PrzedmiotDAO.getPrzedmioty(zalogowanyEmail);
@@ -157,6 +179,115 @@ public class PanelUczniaController {
 
         }
 
+    }
+
+    public void pokazNauczycieli(){
+        powitanieLabel.setText("Twoi nauczyciele");
+        kontenerOcen.getChildren().clear();
+
+        oceny.getStyleClass().removeAll("active-nav");
+        przedmioty.getStyleClass().removeAll("active-nav");
+        nauczyciele.getStyleClass().add("active-nav");
+        mojeDane.getStyleClass().removeAll("active-nav");
+        Nauczyciel wychowawca = NauczycielDAO.getWychowawca(zalogowanyEmail);
+
+        if(wychowawca != null){
+            kontenerOcen.getChildren().add(wpisNauczyciela(wychowawca, true));
+        }
+        List<Nauczyciel> nauczyciele = NauczycielDAO.getNauczyciele(zalogowanyEmail);
+        for(Nauczyciel n : nauczyciele){
+            if(wychowawca != null && n.getEmail().equals(wychowawca.getEmail()))continue;
+            kontenerOcen.getChildren().add(wpisNauczyciela(n, false));
+        }
+    }
+    public VBox wpisNauczyciela(Nauczyciel nauczyciel, Boolean czyWychowawca){
+        VBox karta = new VBox(5);
+        karta.getStyleClass().add("karta-oceny");
+
+        if (czyWychowawca){
+            karta.getStyleClass().add("wychowawca");
+        }
+        Label nauczyciellbl = new Label(nauczyciel.getImie()+" "+ nauczyciel.getNazwisko());
+        nauczyciellbl.getStyleClass().add("header-text");
+        nauczyciellbl.setStyle("-fx-font-size: 16px;");
+
+        Label przedmiotlbl = new Label(nauczyciel.getPrzedmiot());
+        nauczyciellbl.setStyle("-fx-font-size: 14px; -fx-text-fill: #6C757D; -fx-font-weight: bold;");
+
+        Label kontaktlbl = new Label("Email: "+ nauczyciel.getEmail()+"| Tel: "+nauczyciel.getNumer_telefonu());
+        nauczyciellbl.getStyleClass().add("oceny-lbl");
+        karta.getChildren().addAll(nauczyciellbl, przedmiotlbl, kontaktlbl);
+        return karta;
+    }
+
+    public void pokazMojeDane(){
+        powitanieLabel.setText("Mój profil");
+        kontenerOcen.getChildren().clear();
+
+        oceny.getStyleClass().removeAll("active-nav");
+        przedmioty.getStyleClass().removeAll("active-nav");
+        nauczyciele.getStyleClass().removeAll("active-nav");
+        mojeDane.getStyleClass().add("active-nav");
+
+        Uczen profil = UczenDAO.daneUcznia(zalogowanyEmail);
+
+        if(profil == null){
+            Label blad = new Label("Nie udało się załadować profilu");
+            blad.getStyleClass().add("brak-lbl");
+            kontenerOcen.getChildren().add(blad);
+        }
+        VBox kartaProfilu = new VBox(30);
+        kartaProfilu.getStyleClass().add("profil-karta");
+        kartaProfilu.setAlignment(Pos.TOP_LEFT);
+
+        VBox naglowek = new VBox(10);
+        naglowek.setAlignment(Pos.TOP_LEFT);
+
+        Label uczenlbl = new Label(profil.getImie()+" "+profil.getNazwisko());
+        uczenlbl.getStyleClass().add("profil-imie");
+
+        Label klasalbl = new Label("Uczeń klasy: "+profil.getKlasa());
+        klasalbl.getStyleClass().add("profil-klasa");
+
+        naglowek.getChildren().addAll(uczenlbl,klasalbl);
+
+        Line przerwa = new  Line();
+        przerwa.getStyleClass().add("profil-przerwa");
+
+        HBox szczegoly = new HBox();
+        szczegoly.setAlignment(Pos.CENTER_LEFT);
+
+        VBox kolumnaLewa = new VBox(15);
+        kolumnaLewa.getChildren().addAll(
+                wierszDanych("PESEL:", profil.getPesel()),
+                wierszDanych("Data Urodzenia:", profil.getData_urodzenia()));
+
+        VBox kolumnaPrawa = new VBox(15);
+        kolumnaPrawa.getChildren().addAll(
+                wierszDanych("Email:", profil.getEmail()),
+                wierszDanych("Telefon:", profil.getNumer_telefonu()));
+
+        Region odstep = new Region();
+        HBox.setHgrow(odstep, Priority.ALWAYS);
+        odstep.setMinWidth(30);
+        szczegoly.getChildren().addAll(kolumnaLewa,odstep,kolumnaPrawa);
+
+        kartaProfilu.getChildren().addAll(naglowek,przerwa,szczegoly);
+
+        VBox wysrodkuj = new VBox(kartaProfilu);
+        wysrodkuj.setAlignment(Pos.TOP_LEFT);
+
+        VBox.setMargin(kartaProfilu , new Insets(30,0,0,0));
+        kontenerOcen.getChildren().add(wysrodkuj);
+    }
+    private HBox wierszDanych(String napis, String wartosc){
+        Label napislbl = new Label(napis);
+        napislbl.getStyleClass().add("profil-napis");
+
+        Label wartosclbl = new Label(wartosc);
+        wartosclbl.getStyleClass().add("profil-wartosc");
+
+        return new HBox(10, napislbl, wartosclbl);
     }
 
 

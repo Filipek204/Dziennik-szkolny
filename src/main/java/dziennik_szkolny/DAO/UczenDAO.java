@@ -29,30 +29,29 @@ public class UczenDAO {
             return false;
         }
     }
-    public List<Uczen> wszyscyUczniowie(){
-        List<Uczen> uczniowie = new ArrayList<>();
-        String sql = "select * from uczen";
+    public static Uczen daneUcznia(String email){
+        String sql = "select u.imie, u.nazwisko, u.pesel, u.data_urodzenia, u.email, u.numer_telefonu, k.nazwa as klasa from uczen u join klasa k using(id_klasy) where u.email =?";
         try(
             Connection con = DriverManager.getConnection(url);
-            Statement stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery(sql)
+            PreparedStatement pstmt = con.prepareStatement(sql);
         ){
-            while(rs.next()) {
-                int id = rs.getInt("id_ucznia");
-                String imie = rs.getString("imie");
-                String nazwisko = rs.getString("nazwisko");
-                int id_klasy = rs.getInt("id_klasy");
-                String pesel = rs.getString("pesel");
-                String data_urodzenia = rs.getString("data_urodzenia");
-                String email = rs.getString("email");
-                String haslo = rs.getString("haslo");
-                String numer_telefonu = rs.getString("numer_telefonu");
-                Uczen u = new Uczen(id, imie, nazwisko, id_klasy, pesel, data_urodzenia, email, haslo, numer_telefonu);
-                uczniowie.add(u);
+            pstmt.setString(1, email);
+            ResultSet rs = pstmt.executeQuery();
+            if(rs.next()) {
+
+                return new Uczen(rs.getString("imie"),
+                        rs.getString("nazwisko"),
+                        rs.getString("pesel"),
+                        rs.getString("data_urodzenia"),
+                        rs.getString("email"),
+                        rs.getString("numer_telefonu"),
+                        rs.getString("klasa")
+
+                );
             }
         }catch(SQLException e){
-            System.out.println("Błąd pobierania uczniów: " + e.getMessage());
+            System.out.println("Błąd pobierania danych ucznia! " + e.getMessage());
         }
-        return uczniowie;
+        return null;
     }
 }

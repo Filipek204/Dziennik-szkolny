@@ -43,7 +43,8 @@ public class LogowanieController {
 
                 javafx.fxml.FXMLLoader fxmlLoader = new javafx.fxml.FXMLLoader(getClass().getResource("/widoki/panelNauczyciela.fxml"));
                 javafx.scene.Parent root = fxmlLoader.load();
-
+                PanelNauczycielaController nauczycielController = fxmlLoader.getController();
+                nauczycielController.zaloguj(email);
                 javafx.stage.Stage stage = (javafx.stage.Stage) zalogujbtn.getScene().getWindow();
 
                 stage.setScene(new javafx.scene.Scene(root));

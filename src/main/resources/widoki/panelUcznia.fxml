@@ -10,7 +10,7 @@
 <HBox prefHeight="650.0" prefWidth="1000.0" styleClass="root-pane" stylesheets="@../style/main.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dziennik_szkolny.controllers.PanelUczniaController">
     <children>
 
-        <VBox prefWidth="250.0" spacing="5.0" styleClass="sidebar">
+        <VBox minWidth="220.0" prefWidth="250.0" spacing="5.0" styleClass="sidebar">
             <padding>
                 <Insets bottom="30.0" left="20.0" right="20.0" top="40.0" />
             </padding>
@@ -21,10 +21,10 @@
                     </VBox.margin>
                 </Label>
 
-                <Button maxWidth="1.7976931348623157E308" styleClass="nav-button, active-nav" onAction="#pokazOceny" text="Oceny" />
-                <Button maxWidth="1.7976931348623157E308" styleClass="nav-button" onAction="#pokazPrzedmioty" text="Przedmioty" />
-                <Button maxWidth="1.7976931348623157E308" styleClass="nav-button" text="Nauczyciele" />
-                <Button maxWidth="1.7976931348623157E308" styleClass="nav-button" text="Moje dane" />
+                <Button fx:id="oceny" maxWidth="1.7976931348623157E308" onAction="#pokazOceny" styleClass="nav-button" text="Oceny" />
+                <Button fx:id="przedmioty" maxWidth="1.7976931348623157E308" onAction="#pokazPrzedmioty" styleClass="nav-button" text="Przedmioty" />
+                <Button fx:id="nauczyciele" maxWidth="1.7976931348623157E308" onAction="#pokazNauczycieli" styleClass="nav-button" text="Nauczyciele" />
+                <Button fx:id="mojeDane" maxWidth="1.7976931348623157E308" onAction="#pokazMojeDane" styleClass="nav-button" text="Moje dane" />
 
                 <Region VBox.vgrow="ALWAYS" />
 

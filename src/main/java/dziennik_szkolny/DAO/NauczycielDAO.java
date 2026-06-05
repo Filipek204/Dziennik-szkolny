@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static java.util.Arrays.parallelPrefix;
 
 public class NauczycielDAO {
     private static final String url =  "jdbc:sqlite:dziennik.db";
@@ -118,11 +119,11 @@ public class NauczycielDAO {
         List<UczenDziennik> listaUczniow = new ArrayList<>();
 
         String sqlUczniowie = "select u.id_ucznia, u.imie, u.nazwisko from uczen u join klasa k using(id_klasy) where k.nazwa =? order by u.nazwisko, u.imie";
-        String sqlOceny = "select o.id_oceny, o.wartosc from ocena o join przedmiot p using(id_przedmiotu) where o.id_ucznia =? and p.nazwa =?";
+        String sqlOceny = "select o.id_oceny, o.wartosc, o.waga, o.opis from ocena o join przedmiot p using(id_przedmiotu) where o.id_ucznia =? and p.nazwa =?";
 
         try(Connection conn = DriverManager.getConnection(url);
         PreparedStatement pstmtUczniowie = conn.prepareStatement(sqlUczniowie);
-        PreparedStatement pstmtOceny = conn.prepareStatement(sqlOceny);){
+        PreparedStatement pstmtOceny = conn.prepareStatement(sqlOceny)){
             pstmtUczniowie.setString(1,nazwaKlasy);
             ResultSet rsUczniowie = pstmtUczniowie.executeQuery();
 
@@ -139,7 +140,9 @@ public class NauczycielDAO {
                 while(rsOceny.next()){
                     ocenyUcznia.add(new OcenaDziennik(
                             rsOceny.getInt("id_oceny"),
-                            rsOceny.getString("wartosc")
+                            rsOceny.getString("wartosc"),
+                            rsOceny.getInt("waga"),
+                            rsOceny.getString("opis")
                     ));
                 }
                 listaUczniow.add( new UczenDziennik(idUcznia, imieNazwisko, ocenyUcznia));
@@ -179,15 +182,77 @@ public class NauczycielDAO {
             return false;
         }
     }
-//    public static boolean edytujOcene(int nowa){
-//        String sqlUsun = "delete from ocena where id_oceny =?";
-//        try(Connection conn = DriverManager.getConnection(url);
-//            PreparedStatement pstmt = conn.prepareStatement(sqlUsun)){
-//            pstmt.setInt(1, idOceny);
-//            return pstmt.executeUpdate() >0;
-//        }catch(Exception e){
-//            System.out.println("Błąd podczas usuwania oceny! "+e.getMessage());
-//            return false;
-//        }
-//    }
+    public static boolean edytujOcene(int idOceny, int nowaWartosc, int nowaWaga, String nowyOpis){
+        String sqlUsun = "update ocena set wartosc=?, waga=?, opis=? where id_oceny =?";
+        try(Connection conn = DriverManager.getConnection(url);
+            PreparedStatement pstmt = conn.prepareStatement(sqlUsun)){
+            pstmt.setInt(1, nowaWartosc);
+            pstmt.setInt(2, nowaWaga);
+            pstmt.setString(3, nowyOpis);
+            pstmt.setInt(4, idOceny);
+
+            return pstmt.executeUpdate() >0;
+        }catch(Exception e){
+            System.out.println("Błąd podczas edytowania oceny! "+e.getMessage());
+            return false;
+        }
+    }
+
+    public static boolean dodajUcznia(String emailWychowawcy, String imie, String nazwisko, String pesel, String dataUr, String email, String tel){
+        String sqlDodajUcznia = "insert into uczen (imie, nazwisko, pesel, data_urodzenia, email, numer_telefonu, id_klasy, haslo) values (?,?,?,?,?,?, (select id_klasy from klasa where id_nauczyciela = (select id_nauczyciela from nauczyciel where email=?)), ?)";
+        try(Connection conn = DriverManager.getConnection(url);
+        PreparedStatement pstmt = conn.prepareStatement(sqlDodajUcznia)){
+
+        pstmt.setString(1, imie);
+        pstmt.setString(2, nazwisko);
+        pstmt.setString(3, pesel);
+        pstmt.setString(4, dataUr);
+        pstmt.setString(5, email);
+        pstmt.setString(6, tel);
+        pstmt.setString(7, emailWychowawcy);
+            pstmt.setString(8, "$2a$10$55hvNXcgIjXMh98cflCQVuwo9hiJx.Zkl0SB1TmdFb71wGPoSTuGe");
+
+        return pstmt.executeUpdate()> 0;
+
+        }catch(Exception e){
+            System.out.println("Błąd podczas dodawania ucznia: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public static boolean edytujUcznia(int idUcznia, String imie, String nazwisko, String pesel, String dataUr, String email, String tel){
+        String sqlEdytujUcznia = "update uczen set imie =?, nazwisko=?, pesel =?, data_urodzenia=?, email=?, numer_telefonu=? where id_ucznia = ?";
+        try(Connection conn = DriverManager.getConnection(url);
+            PreparedStatement pstmt = conn.prepareStatement(sqlEdytujUcznia)){
+
+            pstmt.setString(1, imie);
+            pstmt.setString(2, nazwisko);
+            pstmt.setString(3, pesel);
+            pstmt.setString(4, dataUr);
+            pstmt.setString(5, email);
+            pstmt.setString(6, tel);
+            pstmt.setInt(7, idUcznia);
+
+            return pstmt.executeUpdate()> 0;
+
+        }catch(Exception e){
+            System.out.println("Błąd podczas edytowania ucznia: " + e.getMessage());
+            return false;
+        }
+    }
+    public static boolean usunUcznia(int idUcznia){
+        String sqlEdytujUcznia = "delete from uczen where id_ucznia = ?";
+        try(Connection conn = DriverManager.getConnection(url);
+            PreparedStatement pstmt = conn.prepareStatement(sqlEdytujUcznia)){
+
+            pstmt.setInt(1, idUcznia);
+
+            return pstmt.executeUpdate()> 0;
+
+        }catch(Exception e){
+            System.out.println("Błąd podczas usuwania ucznia: " + e.getMessage());
+            return false;
+        }
+    }
+
 }

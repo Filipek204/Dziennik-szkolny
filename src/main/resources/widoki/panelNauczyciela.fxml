@@ -22,8 +22,8 @@
                 </Label>
 
                 <Button fx:id="Mojeprzedmioty" maxWidth="1.7976931348623157E308"  styleClass="nav-button" onAction="#pokazListeKlas" text="Lista klas" />
-                <Button fx:id="ocenyKlasy" maxWidth="1.7976931348623157E308"  styleClass="nav-button" text="Podgląd ocen" />
-                <Button fx:id="uczniowieKlasy" maxWidth="1.7976931348623157E308" styleClass="nav-button" text="Lista uczniów" />
+                <Button fx:id="ocenyKlasy" maxWidth="1.7976931348623157E308" styleClass="nav-button" onAction="#pokazUczniowKlasy" text="Podgląd ocen" />
+                <Button fx:id="uczniowieKlasy" maxWidth="1.7976931348623157E308" styleClass="nav-button" onAction="#pokazUczniow" text="Lista uczniów" />
                 <Button fx:id="NauczycieleKlasy" maxWidth="1.7976931348623157E308"  styleClass="nav-button" text="Przydziały klasy" />
 
                 <Region VBox.vgrow="ALWAYS" />

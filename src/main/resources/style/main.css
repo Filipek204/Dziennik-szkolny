@@ -281,3 +281,19 @@
 .przycisk-dodaj-ocene:hover {
     -fx-background-color: #059669;
 }
+.styl-tekstu{
+    -fx-text-fill: #6C757D;
+    -fx-font-size: 14px;
+}
+.edytuj-dane-przycisk{
+    -fx-background-color: transparent;
+    -fx-text-fill: #4361EE;
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+}
+.usun-ucznia-przycisk{
+    -fx-background-color: transparent;
+    -fx-text-fill: #EF4444;
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+}

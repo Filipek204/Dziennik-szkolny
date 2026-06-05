@@ -1,6 +1,7 @@
 package dziennik_szkolny.models;
 
 public class Uczen {
+    private int idUcznia;
     private String imie;
     private String nazwisko;
     private String pesel;
@@ -9,7 +10,8 @@ public class Uczen {
     private String numer_telefonu;
     private String klasa;
 
-    public Uczen( String imie, String nazwisko, String pesel, String data_urodzenia, String email, String numer_telefonu, String klasa) {
+    public Uczen( int idUcznia,String imie, String nazwisko, String pesel, String data_urodzenia, String email, String numer_telefonu, String klasa) {
+        this.idUcznia = idUcznia;
         this.imie = imie;
         this.nazwisko = nazwisko;
         this.pesel = pesel;
@@ -19,6 +21,8 @@ public class Uczen {
         this.klasa = klasa;
     }
 
+    public int getIdUcznia() {return idUcznia;}
+    public void setIdUcznia(int idUcznia) {this.idUcznia = idUcznia;}
 
     public String getImie() {return imie;}
     public void setImie(String imie) {this.imie = imie;}

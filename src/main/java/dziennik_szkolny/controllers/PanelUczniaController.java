@@ -13,10 +13,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.Separator;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -51,7 +49,7 @@ public class PanelUczniaController {
         try{
             Parent root = FXMLLoader.load(getClass().getResource("/widoki/panelLogowania.fxml"));
             Stage stage = (Stage) wylogujbtn.getScene().getWindow();
-            stage.setScene(new Scene(root));
+            stage.getScene().setRoot(root);
         }
         catch(Exception e){
             System.out.println("Błąd podczas przełączania scen! " + e.getMessage());

@@ -39,7 +39,7 @@ public class PanelNauczycielaController {
         try{
             Parent root = FXMLLoader.load(getClass().getResource("/widoki/panelLogowania.fxml"));
             Stage stage = (Stage) wylogujbtn.getScene().getWindow();
-            stage.setScene(new Scene(root));
+            stage.getScene().setRoot(root);
         }
         catch(Exception e){
             System.out.println("Błąd podczas przełączania scen! " + e.getMessage());
@@ -49,7 +49,7 @@ public class PanelNauczycielaController {
     public void zaloguj(String email){
         this.zalogowanyEmail = email;
         this.klasaWychowawcza = NauczycielDAO.getKlasaWychowawcy(zalogowanyEmail);
-
+        pokazListeKlas();
         if(klasaWychowawcza != null){
             powitanieLabel.setText("Witaj, "+ email + " (Wychowawca klasy "+klasaWychowawcza+")");
             pokazMenuWychowawcy(true);
@@ -450,7 +450,9 @@ public class PanelNauczycielaController {
 
             Label danelbl = new Label(u.getImie()+" "+u.getNazwisko());
             danelbl.getStyleClass().add("wiersz-dane");
-
+            danelbl.setPrefWidth(220);
+            danelbl.setMinWidth(220);
+            danelbl.setMaxWidth(220);
             Region przerwa = new Region();
             HBox.setHgrow(przerwa, Priority.ALWAYS);
 
@@ -475,6 +477,7 @@ public class PanelNauczycielaController {
             detale.add(telefonlbl, 0, 1);
             detale.add(pesellbl, 1, 0);
             detale.add(datalbl, 1, 1);
+
 
             naglowek.getChildren().addAll(danelbl, przerwa);
 
@@ -582,6 +585,74 @@ public class PanelNauczycielaController {
                     }
         });
     }
+    public void przypisNauczycieli(){
+        powitanieLabel.setText("nauczyciele przypisani do mojej klasy");
+        kontenerGlowny.getChildren().clear();
+        int idKlasy = NauczycielDAO.getIdKlasyWychowawcy(zalogowanyEmail);
+        if(idKlasy == 0){
+            Label brak = new Label("Nie masz wychowawstwa w żadnej klasie");
+            brak.getStyleClass().add("brak-lbl");
+            kontenerGlowny.getChildren().add(brak);
+        }
+        List<Przedmiot> przedmioty = NauczycielDAO.getPrzedmiotyKlasy(idKlasy);
+        if(przedmioty.isEmpty()){
+            Label brak = new Label("Brak przedmiotów w systemie, skontaktuj sie z administratorem");
+            brak.getStyleClass().add("brak-lbl");
+            kontenerGlowny.getChildren().add(brak);
+        }
+        for(Przedmiot p: przedmioty){
+            HBox karta = new HBox(20);
+            karta.getStyleClass().add("wiersz-ucznia");
+            karta.setAlignment(Pos.CENTER_LEFT);
+            Label przedmiotlbl = new Label(p.getNazwaPrzedmiotu());
+            przedmiotlbl.getStyleClass().add("wiersz-dane");
+            przedmiotlbl.setPrefWidth(200);
 
+            boolean czyBrakNauczyciela = p.getId_nauczyciela() == 0;
+            Label nauczyciellbl = new Label(p.getImieNauczyciela()+" "+ p.getNazwiskoNauczyciela());
+            nauczyciellbl.setStyle(czyBrakNauczyciela? "-fx-text-fill: #EF4444; -fx-font-style: italic;" : "-fx-text-fill: #6C757D; -fx-font-size: 15px;");
+
+            Region przerwa = new Region();
+            HBox.setHgrow(przerwa, Priority.ALWAYS);
+            Button przypiszbtn = new Button(czyBrakNauczyciela ? "Przypisz nauczyciela": "Zmień nauczyciela");
+            przypiszbtn.getStyleClass().add("przycisk-przedmiot");
+
+            przypiszbtn.setOnAction(e->oknoWyboruNauczyciela(idKlasy, p.getId_przedmiotu(), p.getNazwaPrzedmiotu()));
+            karta.getChildren().addAll(przedmiotlbl, nauczyciellbl, przerwa, przypiszbtn);
+            kontenerGlowny.getChildren().add(karta);
+
+
+        }
+    }
+    private void  oknoWyboruNauczyciela(int idKlasy, int id_przedmiotu, String nazwaPrzedmiotu){
+        List nauczyciele = NauczycielDAO.getWszystcyNauczyciele();
+        ChoiceDialog dialog = new ChoiceDialog<>();
+        dialog.getItems().addAll(nauczyciele);
+        if(!nauczyciele.isEmpty()){
+            dialog.setSelectedItem(nauczyciele.get(0));
+        }
+        dialog.setTitle("Przypisz nauczyciela");
+        dialog.setHeaderText("Wybierz osobę, która będzie uczyć przedmiotu "+ nazwaPrzedmiotu);
+        dialog.setContentText("Nauczyciel:");
+        try{
+            dialog.getDialogPane().getStylesheets().add(getClass().getResource("/style/okienka.css").toExternalForm());
+        }catch(Exception e){
+            System.out.println("Nie znaleziono styli dla dialogu! "+e.getMessage());
+        }
+        dialog.getDialogPane().getStyleClass().add("nowoczesny-dialog");
+
+        Optional<NauczycielSzkola> wynik  = dialog.showAndWait();
+        wynik.ifPresent(wybranyNauczyciel ->{
+            boolean sukces = NauczycielDAO.przypiszNauczyciela(idKlasy, id_przedmiotu, wybranyNauczyciel.getIdNauczyciela());
+            if(sukces){
+                przypisNauczycieli();
+            } else{
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Błąd");
+                alert.setHeaderText("Nie udało się przypisać nauczyciela");
+                alert.showAndWait();
+            }
+        });
+    }
 
 }

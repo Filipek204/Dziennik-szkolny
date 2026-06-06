@@ -4,6 +4,8 @@ public class Przedmiot {
     private String nazwaPrzedmiotu;
     private String imieNauczyciela;
     private String nazwiskoNauczyciela;
+    private int id_przedmiotu;
+    private int id_nauczyciela;
 
     public Przedmiot(String nazwaPrzedmiotu, String imieNauczyciela, String nazwiskoNauczyciela) {
         this.nazwaPrzedmiotu = nazwaPrzedmiotu;
@@ -11,12 +13,21 @@ public class Przedmiot {
         this.nazwiskoNauczyciela = nazwiskoNauczyciela;
     }
 
+    public Przedmiot(String nazwaPrzedmiotu, String imieNauczyciela, String nazwiskoNauczyciela, int id_przedmiotu, int id_nauczyciela) {
+        this.nazwaPrzedmiotu = nazwaPrzedmiotu;
+        this.imieNauczyciela = imieNauczyciela;
+        this.nazwiskoNauczyciela = nazwiskoNauczyciela;
+        this.id_przedmiotu = id_przedmiotu;
+        this.id_nauczyciela = id_nauczyciela;
+    }
+
     public String getNazwaPrzedmiotu() {return nazwaPrzedmiotu;}
-    public void setNazwaPrzedmiotu(String nazwaPrzedmiotu) {this.nazwaPrzedmiotu = nazwaPrzedmiotu;}
 
     public String getImieNauczyciela() {return imieNauczyciela;}
-    public void setImieNauczyciela(String imieNauczyciela) {this.imieNauczyciela = imieNauczyciela;}
 
     public String getNazwiskoNauczyciela() {return nazwiskoNauczyciela;}
-    public void setNazwiskoNauczyciela(String nazwiskoNauczyciela) {this.nazwiskoNauczyciela = nazwiskoNauczyciela;}
+
+    public int getId_przedmiotu() {return id_przedmiotu;}
+
+    public int getId_nauczyciela() {return id_nauczyciela;}
 }

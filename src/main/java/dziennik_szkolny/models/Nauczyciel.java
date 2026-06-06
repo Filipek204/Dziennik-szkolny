@@ -15,6 +15,13 @@ public class Nauczyciel {
         this.przedmiot = przedmiot;
     }
 
+    public Nauczyciel(String imie, String nazwisko, String numer_telefonu, String email) {
+        this.imie = imie;
+        this.nazwisko = nazwisko;
+        this.numer_telefonu = numer_telefonu;
+        this.email = email;
+    }
+
     public String getImie() {return imie;}
     public void setImie(String imie) {this.imie = imie;}
 

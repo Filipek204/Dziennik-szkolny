@@ -1,9 +1,6 @@
 package dziennik_szkolny.DAO;
 
-import dziennik_szkolny.models.Nauczyciel;
-import dziennik_szkolny.models.OcenaDziennik;
-import dziennik_szkolny.models.Przedmiot_Klasa;
-import dziennik_szkolny.models.UczenDziennik;
+import dziennik_szkolny.models.*;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.Connection;
@@ -12,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static java.util.Arrays.parallelPrefix;
@@ -254,5 +252,111 @@ public class NauczycielDAO {
             return false;
         }
     }
+    public static int getIdKlasyWychowawcy(String email){
+        String sqlIdKlasy = "select id_klasy from klasa where id_nauczyciela = (select id_nauczyciela from nauczyciel where email =?)";
+        try(Connection conn = DriverManager.getConnection(url);
+        PreparedStatement pstmt = conn.prepareStatement(sqlIdKlasy)){
+            pstmt.setString(1, email);
+            ResultSet rs = pstmt.executeQuery();
+            if(rs.next()){
+                return rs.getInt("id_klasy");
+            }
+        }catch(Exception e){
+            System.out.println("Błąd podczas pobierania id klasy! "+ e.getMessage());
 
+        }
+        return -1;
+    }
+    public static List<Przedmiot> getPrzedmiotyKlasy(int idKlasy){
+        String sqlprzedmioty = "select p.id_przedmiotu, p.nazwa as nazwa_przedmiotu, n.id_nauczyciela, n.imie , n.nazwisko from przedmiot p left join main.nauczyciel_przedmiot_klasa npk on npk.id_przedmiotu = p.id_przedmiotu left join nauczyciel n on n.id_nauczyciela = npk.id_nauczyciela where npk.id_klasy =? order by p.nazwa";
+        List<Przedmiot> przedmioty = new ArrayList<>();
+        try(Connection conn = DriverManager.getConnection(url);
+            PreparedStatement pstmt = conn.prepareStatement(sqlprzedmioty)){
+            pstmt.setInt(1, idKlasy);
+            ResultSet rs = pstmt.executeQuery();
+
+            while(rs.next()){
+                int idPrzedmiotu = rs.getInt("id_przedmiotu");
+                String imie;
+                String nazwisko;
+                if (rs.getInt("id_nauczyciela")>0) {
+                    imie = rs.getString("imie");
+                    nazwisko = rs.getString("nazwisko");
+                }else{
+                    imie = "brak";
+                    nazwisko = "brak";
+                }
+                przedmioty.add(new Przedmiot(rs.getString("nazwa_przedmiotu"), imie, nazwisko, rs.getInt("id_przedmiotu"), rs.getInt("id_nauczyciela")) );
+
+
+
+            }
+        }catch(Exception e){
+            System.out.println("Błąd podczas pobierania przedmiotów! "+ e.getMessage());
+
+        }
+        return przedmioty;
+    }
+    public static List<NauczycielSzkola>getWszystcyNauczyciele(){
+        List nauczyciele = new ArrayList();
+        String sqlNauczyciele = "select id_nauczyciela, imie, nazwisko from nauczyciel order by nazwisko, imie";
+        try(Connection conn = DriverManager.getConnection(url);
+            PreparedStatement pstmt = conn.prepareStatement(sqlNauczyciele)) {
+            ResultSet rs = pstmt.executeQuery();
+
+            while(rs.next()){
+                nauczyciele.add(new NauczycielSzkola(
+                        rs.getInt("id_nauczyciela"),
+                        rs.getString("imie"),
+                        rs.getString("nazwisko")
+                       )
+                );
+            }
+        }catch(Exception e){
+            System.out.println("Błąd podczas pobierania listy nauczycieli");
+            }
+        return nauczyciele;
+    }
+    public static boolean przypiszNauczyciela(int id_klasy, int id_przedmiotu, int id_nauczyciela){
+        String sqlInstert = "insert into nauczyciel_przedmiot_klasa (id_nauczyciela, id_klasy, id_przedmiotu) values (?, ?, ?)";
+        String sqlUpdate = "update nauczyciel_przedmiot_klasa set id_nauczyciela =? where id_klasy=? and id_przedmiotu=?";
+
+        try(Connection conn = DriverManager.getConnection(url);
+            PreparedStatement pstmtUpdate = conn.prepareStatement(sqlUpdate)) {
+            pstmtUpdate.setInt(1, id_nauczyciela);
+            pstmtUpdate.setInt(2, id_klasy);
+            pstmtUpdate.setInt(3, id_przedmiotu);
+            if (pstmtUpdate.executeUpdate()==0){
+                try(PreparedStatement pstmtInsert = conn.prepareStatement(sqlInstert)){
+                    pstmtUpdate.setInt(1, id_nauczyciela);
+                    pstmtUpdate.setInt(2, id_klasy);
+                    pstmtUpdate.setInt(3, id_przedmiotu);
+                    pstmtInsert.executeUpdate();
+                }
+            }
+            return true;
+        }catch(Exception e){
+            System.out.println("Błąd podczas aktualizowania przypisanego nauczyciela! "+ e.getMessage());
+        }
+        return false;
+    }
+    public static Nauczyciel getProfil(String email){
+        String sqlGetProfil = "select imie, nazwisko, numer_telefonu from nauczyciel where email =?";
+        try(Connection conn = DriverManager.getConnection(url);
+            PreparedStatement pstmt = conn.prepareStatement(sqlGetProfil)) {
+            pstmt.setString(1, email);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()){
+                return new Nauczyciel(
+                        rs.getString("imie"),
+                        rs.getString("nazwisko"),
+                        rs.getString("numer_telefonu"),
+                        rs.getString("email")
+                );
+            }
+        }catch (Exception e){
+            System.out.println("Błąd podczas pobierania danych nauczyciela! "+ e.getMessage());
+        }
+
+    }
 }

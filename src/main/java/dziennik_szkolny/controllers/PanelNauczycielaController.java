@@ -12,6 +12,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 
 import java.util.*;
@@ -513,7 +515,6 @@ public class PanelNauczycielaController {
         }
     }
     private void dodajEdytujUcznia(Uczen uczen){
-        boolean trybEdycji = (uczen!=null);
         Dialog dialog = new Dialog<>();
         dialog.setTitle("Rejestracja nowego ucznia");
         dialog.setHeaderText("Wprowadź dane nowego ucznia");
@@ -537,17 +538,16 @@ public class PanelNauczycielaController {
         TextField emailTekstField = new TextField();
         TextField telefonTekstField = new TextField();
 
-        if(trybEdycji){
-            dialog.setTitle("Edycja danych ucznia");
-            dialog.setHeaderText("Edytujesz ucznia: "+ uczen.getImie()+" "+uczen.getNazwisko());
-            imieTekstField.setText(uczen.getImie());
-            nazwiskoTekstField.setText(uczen.getNazwisko());
-            peselTekstField.setText(uczen.getPesel());
-            dataTekstField.setText(uczen.getData_urodzenia());
-            emailTekstField.setText(uczen.getEmail());
-            telefonTekstField.setText(uczen.getNumer_telefonu());
 
-        }
+        dialog.setTitle("Edycja danych ucznia");
+        dialog.setHeaderText("Edytujesz ucznia: "+ uczen.getImie()+" "+uczen.getNazwisko());
+        imieTekstField.setText(uczen.getImie());
+        nazwiskoTekstField.setText(uczen.getNazwisko());
+        peselTekstField.setText(uczen.getPesel());
+        dataTekstField.setText(uczen.getData_urodzenia());
+        emailTekstField.setText(uczen.getEmail());
+        telefonTekstField.setText(uczen.getNumer_telefonu());
+
         Arrays.asList(imieTekstField,nazwiskoTekstField,peselTekstField, dataTekstField,  emailTekstField, telefonTekstField).forEach(tf->tf.getStyleClass().add("okno-input"));
 
 
@@ -567,12 +567,9 @@ public class PanelNauczycielaController {
         dialog.getDialogPane().setContent(siatka);
         dialog.showAndWait().ifPresent(wynik -> {
                     if (wynik == ButtonType.OK) {
-                        boolean sukces;
-                        if (trybEdycji) {
-                            sukces = NauczycielDAO.edytujUcznia(uczen.getIdUcznia(), imieTekstField.getText(), nazwiskoTekstField.getText(), peselTekstField.getText(), dataTekstField.getText(), emailTekstField.getText(), telefonTekstField.getText());
-                        } else {
-                            sukces = NauczycielDAO.dodajUcznia(zalogowanyEmail, imieTekstField.getText(), nazwiskoTekstField.getText(), peselTekstField.getText(), dataTekstField.getText(), emailTekstField.getText(), telefonTekstField.getText());
-                        }
+
+                            boolean sukces = NauczycielDAO.edytujUcznia(uczen.getIdUcznia(), imieTekstField.getText(), nazwiskoTekstField.getText(), peselTekstField.getText(), dataTekstField.getText(), emailTekstField.getText(), telefonTekstField.getText());
+
                         if (sukces) {
                             pokazUczniow();
                         } else {
@@ -654,5 +651,44 @@ public class PanelNauczycielaController {
             }
         });
     }
+    public void pokazMojProfil(){
+        powitanieLabel.setText("Mój Profil");
+        kontenerGlowny.getChildren().clear();
 
+        Nauczyciel profil = NauczycielDAO.getProfil(zalogowanyEmail);
+        VBox kartaProfilu = new VBox(15);
+        kartaProfilu.getStyleClass().add("wiersz-ucznia");
+        kartaProfilu.setPadding(new Insets(30));
+        kartaProfilu.setAlignment(Pos.CENTER_LEFT);
+
+        Label imieNazwiskolbl = new Label(profil.getImie()+" "+profil.getNazwisko());
+        imieNazwiskolbl.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2B3452;");
+        Region linia = new Region();
+        linia.setMinHeight(1);
+        linia.setPrefHeight(1);
+        linia.setMaxHeight(1);
+        linia.setStyle("-fx-background-color: #E2E8F0;");
+        VBox.setMargin(linia, new Insets(10, 0, 10, 0));
+        GridPane detale = new GridPane();
+        detale.setHgap(20);
+        detale.setVgap(15);
+
+        Label emaillblNapiss = new Label("Adres e-mail");
+        emaillblNapiss.getStyleClass().add("profil-napis");
+        Label emaillblWartosc = new Label(zalogowanyEmail);
+        emaillblWartosc.getStyleClass().add("profil-wartosc");
+
+        Label telefonlblNapis = new Label("Numer telefonu");
+        telefonlblNapis.getStyleClass().add("profil-napis");
+        Label telefonlblWartosc = new Label(profil.getNumer_telefonu());
+        telefonlblWartosc.getStyleClass().add("profil-wartosc");
+
+
+        detale.add(emaillblNapiss, 0,0);
+        detale.add(emaillblWartosc, 1,0);
+        detale.add(telefonlblNapis, 0,1);
+        detale.add(telefonlblWartosc, 1,1);
+        kartaProfilu.getChildren().addAll(imieNazwiskolbl, linia, detale);
+        kontenerGlowny.getChildren().add(kartaProfilu);
+    }
 }

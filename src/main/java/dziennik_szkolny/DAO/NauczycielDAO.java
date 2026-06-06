@@ -196,27 +196,7 @@ public class NauczycielDAO {
         }
     }
 
-    public static boolean dodajUcznia(String emailWychowawcy, String imie, String nazwisko, String pesel, String dataUr, String email, String tel){
-        String sqlDodajUcznia = "insert into uczen (imie, nazwisko, pesel, data_urodzenia, email, numer_telefonu, id_klasy, haslo) values (?,?,?,?,?,?, (select id_klasy from klasa where id_nauczyciela = (select id_nauczyciela from nauczyciel where email=?)), ?)";
-        try(Connection conn = DriverManager.getConnection(url);
-        PreparedStatement pstmt = conn.prepareStatement(sqlDodajUcznia)){
 
-        pstmt.setString(1, imie);
-        pstmt.setString(2, nazwisko);
-        pstmt.setString(3, pesel);
-        pstmt.setString(4, dataUr);
-        pstmt.setString(5, email);
-        pstmt.setString(6, tel);
-        pstmt.setString(7, emailWychowawcy);
-            pstmt.setString(8, "$2a$10$55hvNXcgIjXMh98cflCQVuwo9hiJx.Zkl0SB1TmdFb71wGPoSTuGe");
-
-        return pstmt.executeUpdate()> 0;
-
-        }catch(Exception e){
-            System.out.println("Błąd podczas dodawania ucznia: " + e.getMessage());
-            return false;
-        }
-    }
 
     public static boolean edytujUcznia(int idUcznia, String imie, String nazwisko, String pesel, String dataUr, String email, String tel){
         String sqlEdytujUcznia = "update uczen set imie =?, nazwisko=?, pesel =?, data_urodzenia=?, email=?, numer_telefonu=? where id_ucznia = ?";
@@ -350,13 +330,32 @@ public class NauczycielDAO {
                 return new Nauczyciel(
                         rs.getString("imie"),
                         rs.getString("nazwisko"),
-                        rs.getString("numer_telefonu"),
-                        rs.getString("email")
+                        rs.getString("numer_telefonu")
                 );
             }
         }catch (Exception e){
             System.out.println("Błąd podczas pobierania danych nauczyciela! "+ e.getMessage());
         }
-
+        return null;
     }
+    public static boolean zarejestrujNauczyciel(String imie, String nazwisko, String email, String tel, String haslo){
+        String sqlDodajUcznia = "insert into nauczyciel (imie, nazwisko, email, numer_telefonu, haslo) values (?,?,?,?,?)";
+        try(Connection conn = DriverManager.getConnection(url);
+            PreparedStatement pstmt = conn.prepareStatement(sqlDodajUcznia)){
+
+            String zahashowaneHaslo = org.mindrot.jbcrypt.BCrypt.hashpw(haslo, org.mindrot.jbcrypt.BCrypt.gensalt());
+            pstmt.setString(1, imie);
+            pstmt.setString(2, nazwisko);
+            pstmt.setString(3, email);
+            pstmt.setString(4, tel);
+            pstmt.setString(5, zahashowaneHaslo);
+
+            return pstmt.executeUpdate()> 0;
+
+        }catch(Exception e){
+            System.out.println("Błąd podczas dodawania ucznia: " + e.getMessage());
+            return false;
+        }
+    }
+
 }

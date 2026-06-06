@@ -82,4 +82,25 @@ public class UczenDAO {
         }
         return listauczniow;
     }
+    public static boolean zarejestrujUcznia(String imie, String nazwisko, String pesel, String dataUr, String email, String tel, String haslo){
+        String sqlDodajUcznia = "insert into uczen (imie, nazwisko, pesel, data_urodzenia, email, numer_telefonu, haslo) values (?,?,?,?,?,?, ?)";
+        try(Connection conn = DriverManager.getConnection(url);
+            PreparedStatement pstmt = conn.prepareStatement(sqlDodajUcznia)){
+
+            String zahashowaneHaslo = org.mindrot.jbcrypt.BCrypt.hashpw(haslo, org.mindrot.jbcrypt.BCrypt.gensalt());
+            pstmt.setString(1, imie);
+            pstmt.setString(2, nazwisko);
+            pstmt.setString(3, pesel);
+            pstmt.setString(4, dataUr);
+            pstmt.setString(5, email);
+            pstmt.setString(6, tel);
+            pstmt.setString(7, zahashowaneHaslo);
+
+            return pstmt.executeUpdate()> 0;
+
+        }catch(Exception e){
+            System.out.println("Błąd podczas dodawania ucznia: " + e.getMessage());
+            return false;
+        }
+    }
 }

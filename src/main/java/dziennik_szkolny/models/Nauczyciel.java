@@ -15,11 +15,11 @@ public class Nauczyciel {
         this.przedmiot = przedmiot;
     }
 
-    public Nauczyciel(String imie, String nazwisko, String numer_telefonu, String email) {
+    public Nauczyciel(String imie, String nazwisko, String numer_telefonu) {
         this.imie = imie;
         this.nazwisko = nazwisko;
         this.numer_telefonu = numer_telefonu;
-        this.email = email;
+
     }
 
     public String getImie() {return imie;}

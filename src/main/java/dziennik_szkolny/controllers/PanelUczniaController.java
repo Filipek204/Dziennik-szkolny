@@ -249,8 +249,12 @@ public class PanelUczniaController {
 
         naglowek.getChildren().addAll(uczenlbl,klasalbl);
 
-        Line przerwa = new  Line();
-        przerwa.getStyleClass().add("profil-przerwa");
+        Region linia = new Region();
+        linia.setMinHeight(1);
+        linia.setPrefHeight(1);
+        linia.setMaxHeight(1);
+        linia.setStyle("-fx-background-color: #E2E8F0;");
+        VBox.setMargin(linia, new Insets(10, 0, 10, 0));
 
         HBox szczegoly = new HBox();
         szczegoly.setAlignment(Pos.CENTER_LEFT);
@@ -270,7 +274,7 @@ public class PanelUczniaController {
         odstep.setMinWidth(30);
         szczegoly.getChildren().addAll(kolumnaLewa,odstep,kolumnaPrawa);
 
-        kartaProfilu.getChildren().addAll(naglowek,przerwa,szczegoly);
+        kartaProfilu.getChildren().addAll(naglowek,linia,szczegoly);
 
         VBox wysrodkuj = new VBox(kartaProfilu);
         wysrodkuj.setAlignment(Pos.TOP_LEFT);

@@ -3,10 +3,7 @@ package dziennik_szkolny.DAO;
 import dziennik_szkolny.models.*;
 import org.mindrot.jbcrypt.BCrypt;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -219,7 +216,7 @@ public class NauczycielDAO {
         }
     }
     public static boolean usunUcznia(int idUcznia){
-        String sqlEdytujUcznia = "delete from uczen where id_ucznia = ?";
+        String sqlEdytujUcznia = "update uczen set id_klasy =null where id_ucznia = ?";
         try(Connection conn = DriverManager.getConnection(url);
             PreparedStatement pstmt = conn.prepareStatement(sqlEdytujUcznia)){
 
@@ -228,9 +225,43 @@ public class NauczycielDAO {
             return pstmt.executeUpdate()> 0;
 
         }catch(Exception e){
-            System.out.println("Błąd podczas usuwania ucznia: " + e.getMessage());
+            System.out.println("Błąd podczas usuwania ucznia z klasy: " + e.getMessage());
             return false;
         }
+    }
+    public static boolean przypiszUcznia(int idUcznia, int idKlasy){
+        String sqlEdytujUcznia = "update uczen set id_klasy =? where id_ucznia = ?";
+        try(Connection conn = DriverManager.getConnection(url);
+            PreparedStatement pstmt = conn.prepareStatement(sqlEdytujUcznia)){
+
+            pstmt.setInt(1, idKlasy);
+            pstmt.setInt(2, idUcznia);
+
+            return pstmt.executeUpdate()> 0;
+
+        }catch(Exception e){
+            System.out.println("Błąd podczas przypisywania ucznia do klasy: " + e.getMessage());
+            return false;
+        }
+    }
+    public static List<UczenDziennik> getUczniowieBezKlasy(){
+        List<UczenDziennik> listaUczniow = new ArrayList<>();
+
+        String sqlUczniowieBezKlasy = "select u.id_ucznia, u.imie, u.nazwisko from uczen u where u.id_klasy is null order by u.nazwisko, u.imie";
+
+        try(Connection conn = DriverManager.getConnection(url);
+            PreparedStatement pstmt = conn.prepareStatement(sqlUczniowieBezKlasy)){
+            ResultSet rs = pstmt.executeQuery();
+
+            while(rs.next()){
+            listaUczniow.add(new UczenDziennik(
+                    rs.getInt("id_ucznia"),
+                    (rs.getString("imie")+" "+rs.getString("nazwisko"))));
+            }
+        }catch (Exception e){
+            System.out.println("Błąd podczas pobierania uczniów! "+e.getMessage());
+        }
+        return listaUczniow;
     }
     public static int getIdKlasyWychowawcy(String email){
         String sqlIdKlasy = "select id_klasy from klasa where id_nauczyciela = (select id_nauczyciela from nauczyciel where email =?)";
@@ -357,5 +388,57 @@ public class NauczycielDAO {
             return false;
         }
     }
+    public static List<Przedmiot> wszystkiePrzedmioty(){
+        List<Przedmiot> listaPrzedmiotow = new ArrayList<>();
+        String sqlGetPrzedmioy = "select id_przedmiotu, nazwa from przedmiot";
+        try(Connection conn = DriverManager.getConnection(url);
+            PreparedStatement pstmt = conn.prepareStatement(sqlGetPrzedmioy)) {
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()){
+                listaPrzedmiotow.add(new Przedmiot(
+                        rs.getInt("id_przedmiotu"),
+                        rs.getString("nazwa")
+                ));
+            }
+        }catch (Exception e){
+            System.out.println("Błąd podczas pobierania przedmiotow! "+ e.getMessage());
+        }
+        return null;
+    }
 
+    public static boolean nowaKlasa(String nazwaKlasy, String emailWychowawcy, List<Integer> idPrzedmiotow) {
+        String sqlDodajKlase = "insert into klasa(nazwa, id_nauczyciela) values(?, (select id_nauczyciela from nauczyciel where email = ?))";
+        String sqlDodajPrzedmioty = "insert into nauczyciel_przedmiot_klasa (id_klasy, id_przedmiotu) values (?, ?)";
+
+        try (Connection conn = DriverManager.getConnection(url)){
+            conn.setAutoCommit(false);
+            int idKlasy = -1;
+            try(PreparedStatement pstmtDodajKlase = conn.prepareStatement(sqlDodajKlase, Statement.RETURN_GENERATED_KEYS)){
+                pstmtDodajKlase.setString(1, nazwaKlasy);
+                pstmtDodajKlase.setString(2, emailWychowawcy);
+                pstmtDodajKlase.executeUpdate();
+                try (ResultSet kluczeGlowne = pstmtDodajKlase.getGeneratedKeys()) {
+                    if (kluczeGlowne.next()) {
+                        idKlasy = kluczeGlowne.getInt(1);
+                    } else {
+                        conn.rollback();
+                        return false;
+                    }
+                }
+            }
+            try (PreparedStatement pstmtDodajPrzedmioty = conn.prepareStatement(sqlDodajPrzedmioty)) {
+                for(Integer idPrzedmiotu : idPrzedmiotow){
+                    pstmtDodajPrzedmioty.setInt(1, idKlasy);
+                    pstmtDodajPrzedmioty.setInt(2, idPrzedmiotu);
+                    pstmtDodajPrzedmioty.addBatch();
+                }
+                pstmtDodajPrzedmioty.executeBatch();
+            }
+            conn.commit();
+            return true;
+        } catch (Exception e) {
+            System.out.println("Błąd podczas dodawania nowej klasy z przedmiotami");
+            return false;
+        }
+    }
 }

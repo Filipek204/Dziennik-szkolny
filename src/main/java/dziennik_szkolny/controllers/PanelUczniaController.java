@@ -59,11 +59,14 @@ public class PanelUczniaController {
     public void zaloguj(String email){
         this.zalogowanyEmail = email;
         pokazOceny();
+        Uczen uczen = UczenDAO.daneUcznia(zalogowanyEmail);
+        powitanieLabel.setText("Witaj "+uczen.getImie()+"!");
     }
 
     @FXML
     public void pokazOceny(){
-        powitanieLabel.setText("Witaj "+zalogowanyEmail+"!");
+
+        powitanieLabel.setText("Moje oceny");
         oceny.getStyleClass().add("active-nav");
         przedmioty.getStyleClass().removeAll("active-nav");
         nauczyciele.getStyleClass().removeAll("active-nav");
@@ -212,7 +215,7 @@ public class PanelUczniaController {
         Label przedmiotlbl = new Label(nauczyciel.getPrzedmiot());
         nauczyciellbl.setStyle("-fx-font-size: 14px; -fx-text-fill: #6C757D; -fx-font-weight: bold;");
 
-        Label kontaktlbl = new Label("Email: "+ nauczyciel.getEmail()+"| Tel: "+nauczyciel.getNumer_telefonu());
+        Label kontaktlbl = new Label("Email: "+ nauczyciel.getEmail()+" | Tel: "+nauczyciel.getNumer_telefonu());
         nauczyciellbl.getStyleClass().add("oceny-lbl");
         karta.getChildren().addAll(nauczyciellbl, przedmiotlbl, kontaktlbl);
         return karta;

@@ -13,6 +13,11 @@ public class UczenDziennik {
         this.oceny = oceny;
     }
 
+    public UczenDziennik(int idUcznia, String imieNazwisko) {
+        this.idUcznia = idUcznia;
+        this.imieNazwisko = imieNazwisko;
+    }
+
     public int getIdUcznia() {return idUcznia;}
     public void setIdUcznia(int idUcznia) {this.idUcznia = idUcznia;}
 
@@ -21,4 +26,9 @@ public class UczenDziennik {
 
     public List<OcenaDziennik> getOceny() {return oceny;}
     public void setOceny(List<OcenaDziennik> oceny) {this.oceny = oceny;}
+
+    @Override
+    public String toString() {
+        return imieNazwisko;
+    }
 }

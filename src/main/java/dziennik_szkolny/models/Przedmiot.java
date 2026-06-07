@@ -21,6 +21,11 @@ public class Przedmiot {
         this.id_nauczyciela = id_nauczyciela;
     }
 
+    public Przedmiot(int id_przedmiotu, String nazwaPrzedmiotu) {
+        this.id_przedmiotu = id_przedmiotu;
+        this.nazwaPrzedmiotu = nazwaPrzedmiotu;
+    }
+
     public String getNazwaPrzedmiotu() {return nazwaPrzedmiotu;}
 
     public String getImieNauczyciela() {return imieNauczyciela;}

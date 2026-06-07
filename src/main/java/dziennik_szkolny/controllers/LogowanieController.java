@@ -2,6 +2,7 @@ package dziennik_szkolny.controllers;
 
 import dziennik_szkolny.DAO.NauczycielDAO;
 import dziennik_szkolny.DAO.UczenDAO;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -23,6 +24,11 @@ public class LogowanieController {
             comboRola.setValue("Uczeń");
             comboRola.setOnAction(e->wybranaRola());
         }
+        Platform.runLater(()->{
+            if(panelLogowaniaBox!=null){
+                panelLogowaniaBox.requestFocus();
+            }
+        });
     }
     @FXML private void panelRejestracji(){
         panelLogowaniaBox.setManaged(false);
@@ -82,7 +88,11 @@ public class LogowanieController {
             }
 
         }else{
-            System.out.println("BŁĄD! Niepoprawny email lub hasło.");
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Błąd");
+            alert.setHeaderText("Błąd logowania");
+            alert.setContentText("Nie udało się zalogować");
+            alert.showAndWait();
         }
     }
 

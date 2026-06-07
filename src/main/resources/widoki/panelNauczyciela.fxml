@@ -26,7 +26,7 @@
                 <Button fx:id="uczniowieKlasy" maxWidth="1.7976931348623157E308" styleClass="nav-button" onAction="#pokazUczniow" text="Lista uczniów" />
                 <Button fx:id="NauczycieleKlasy" maxWidth="1.7976931348623157E308"  styleClass="nav-button" onAction="#przypisNauczycieli" text="Przydziały klasy" />
                 <Button fx:id="mojProfil" maxWidth="1.7976931348623157E308"  styleClass="nav-button" onAction="#pokazMojProfil" text="Mój profil" />
-
+                <Button fx:id="nowaKlasa" maxWidth="1.7976931348623157E308"  styleClass="nav-button" onAction="#DodajKlaseOkno" text="Dodaj nową klasę" />
                 <Region VBox.vgrow="ALWAYS" />
 
                 <Button fx:id="wylogujbtn" maxWidth="1.7976931348623157E308" onAction="#wyloguj" styleClass="logout-button" text="Wyloguj się" />

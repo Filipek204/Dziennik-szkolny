@@ -89,7 +89,7 @@
              <HBox spacing="10.0">
                  <children>
                      <PasswordField fx:id="haslo" promptText="Hasło" style="-fx-background-color: #f8f9fa; -fx-border-color: #e0e0e0; -fx-border-radius: 5; -fx-padding: 8;" HBox.hgrow="ALWAYS" />
-                     <TextField fx:id="telefon" promptText="Telefon" style="-fx-background-color: #f8f9fa; -fx-border-color: #e0e0e0; -fx-border-radius: 5; -fx-padding: 8;" HBox.hgrow="ALWAYS" />
+                     <TextField fx:id="telefon" promptText="Telefon (9 cyfr)" style="-fx-background-color: #f8f9fa; -fx-border-color: #e0e0e0; -fx-border-radius: 5; -fx-padding: 8;" HBox.hgrow="ALWAYS" />
                  </children>
              </HBox>
 

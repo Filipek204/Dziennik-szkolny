@@ -1,5 +1,4 @@
 package dziennik_szkolny.controllers;
-
 import dziennik_szkolny.DAO.NauczycielDAO;
 import dziennik_szkolny.DAO.OcenaDAO;
 import dziennik_szkolny.DAO.UczenDAO;
@@ -9,13 +8,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
 import javafx.stage.Stage;
-
 import java.util.*;
 
 
@@ -27,9 +22,9 @@ public class PanelNauczycielaController {
     @FXML
     private Button wylogujbtn;
     @FXML
-    private Button Mojeprzedmioty;
-    @FXML
     private Button ocenyKlasy;
+    @FXML
+    private Button nowaKlasa;
     @FXML
     private Button uczniowieKlasy;
     @FXML
@@ -51,12 +46,13 @@ public class PanelNauczycielaController {
     public void zaloguj(String email){
         this.zalogowanyEmail = email;
         this.klasaWychowawcza = NauczycielDAO.getKlasaWychowawcy(zalogowanyEmail);
+        Nauczyciel profil = NauczycielDAO.getProfil(zalogowanyEmail);
         pokazListeKlas();
         if(klasaWychowawcza != null){
-            powitanieLabel.setText("Witaj, "+ email + " (Wychowawca klasy "+klasaWychowawcza+")");
+            powitanieLabel.setText("Witaj, "+ profil.getImie() + " (Wychowawca klasy "+klasaWychowawcza+")");
             pokazMenuWychowawcy(true);
         }else{
-            powitanieLabel.setText("Witaj, "+ email);
+            powitanieLabel.setText("Witaj, "+ profil.getImie());
             pokazMenuWychowawcy(false);
         }
     }
@@ -69,6 +65,9 @@ public class PanelNauczycielaController {
 
         NauczycieleKlasy.setVisible(czyPokazac);
         NauczycieleKlasy.setManaged(czyPokazac);
+
+        nowaKlasa.setVisible(!czyPokazac);
+        nowaKlasa.setVisible(!czyPokazac);
     }
 
     @FXML
@@ -434,7 +433,7 @@ public class PanelNauczycielaController {
 
         Button dodajUczniabtn = new Button("+ Dodaj nowego ucznia");
         dodajUczniabtn.getStyleClass().add("przycisk-dodaj-ocene");
-        dodajUczniabtn.setOnAction(e-> dodajEdytujUcznia(null));
+        dodajUczniabtn.setOnAction(e-> przypiszUcznia());
 
         panelGorny.getChildren().add(dodajUczniabtn);
         kontenerGlowny.getChildren().add(panelGorny);
@@ -487,14 +486,14 @@ public class PanelNauczycielaController {
             sekcjaAkcji.setAlignment(Pos.CENTER_RIGHT);
             Button edytujbtn = new Button("Edytuj dane");
             edytujbtn.getStyleClass().add("edytuj-dane-przycisk");
-            edytujbtn.setOnAction(e->dodajEdytujUcznia(u));
+            edytujbtn.setOnAction(e->edytujUcznia(u));
 
             Button usunbtn = new Button("Usuń ucznia");
             usunbtn.getStyleClass().add("usun-ucznia-przycisk");
             usunbtn.setOnAction(e->{
                 Alert ostrzezenie = new Alert(Alert.AlertType.CONFIRMATION);
                 ostrzezenie.setTitle("Uwaga!");
-                ostrzezenie.setHeaderText("Czy na pewno chcesz usunąć tego ucznia?");
+                ostrzezenie.setHeaderText("Czy na pewno chcesz usunąć tego ucznia z klasy?");
 
                 if(ostrzezenie.showAndWait().orElse(ButtonType.CANCEL) ==ButtonType.OK){
                     boolean sukces = NauczycielDAO.usunUcznia(u.getIdUcznia());
@@ -514,7 +513,39 @@ public class PanelNauczycielaController {
             kontenerGlowny.getChildren().add(karta);
         }
     }
-    private void dodajEdytujUcznia(Uczen uczen){
+    private void przypiszUcznia(){
+        int idKlasy = NauczycielDAO.getIdKlasyWychowawcy(zalogowanyEmail);
+        List<UczenDziennik> wolniUczniowie = NauczycielDAO.getUczniowieBezKlasy();
+
+        if(wolniUczniowie.isEmpty()){
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Brak wolnych uczniów w bazie!");
+            alert.setHeaderText("Wszyscy zarejestrowani uczniowie mają już przypisaną klasę");
+            alert.showAndWait();
+        }
+        ChoiceDialog<UczenDziennik> dialog = new ChoiceDialog<>(wolniUczniowie.get(0), wolniUczniowie);
+        dialog.setTitle("Dodaj ucznia do klasy");
+        dialog.setHeaderText("Wybierz ucznia z listy nieprzypisanych osób");
+        dialog.setContentText("Uczeń");
+        try{
+            dialog.getDialogPane().getStylesheets().add(getClass().getResource("/style/okienka.css").toExternalForm());
+        }catch(Exception e){
+            System.out.println("Nie znaleziono styli dla dialogu! "+e.getMessage());
+        }
+        dialog.getDialogPane().getStyleClass().add("nowoczesny-dialog");
+
+        dialog.showAndWait().ifPresent(wybrany->{
+            if(NauczycielDAO.przypiszUcznia(wybrany.getIdUcznia(), idKlasy)){
+                pokazUczniow();
+            }else{
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Błąd!");
+                alert.setHeaderText("Nie udało się przypisać ucznia do klasy");
+                alert.showAndWait();
+            }
+        });
+    }
+    private void edytujUcznia(Uczen uczen){
         Dialog dialog = new Dialog<>();
         dialog.setTitle("Rejestracja nowego ucznia");
         dialog.setHeaderText("Wprowadź dane nowego ucznia");
@@ -690,5 +721,72 @@ public class PanelNauczycielaController {
         detale.add(telefonlblWartosc, 1,1);
         kartaProfilu.getChildren().addAll(imieNazwiskolbl, linia, detale);
         kontenerGlowny.getChildren().add(kartaProfilu);
+    }
+    public void DodajKlaseOkno(){
+        Dialog<ButtonType> dialog = new Dialog();
+        dialog.setTitle("Nowa klasa");
+        dialog.setHeaderText("Zostań wychowawcą nowej klasy i wybierz jej przedmioty");
+        try{
+            dialog.getDialogPane().getStylesheets().add(getClass().getResource("/style/okienka.css").toExternalForm());
+        }catch(Exception e){
+            System.out.println("Nie znaleziono styli dla dialogu! "+e.getMessage());
+        }
+        dialog.getDialogPane().getStyleClass().add("nowoczesny-dialog");
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.OK, ButtonType.CANCEL);
+
+        VBox kontener = new VBox(15);
+        kontener.setPadding(new Insets(20));
+        TextField nazwaTextField = new TextField();
+        nazwaTextField.setPromptText("Podaj nazwę klasy (mp. 1A, 2C");
+        nazwaTextField.getStyleClass().add("okno-input");
+
+        Label przedmiotylbl = new Label("Wybierz przedmioty nauczane w tej klasie");
+        przedmiotylbl.setStyle("-fx-font-weight: bold;");
+
+        List<Przedmiot> dostepnePrzedmioty = NauczycielDAO.wszystkiePrzedmioty();
+        VBox listaPrzedmiotowBox = new VBox(8);
+        listaPrzedmiotowBox.setStyle("-fx-background-color: #F8FAFC; -fx-padding: 15; -fx-border-color: #E2E8F0; -fx-border-radius: 5;");
+
+        Map<CheckBox, Integer> mapaCheckBoxow = new HashMap<>();
+        for(Przedmiot p : dostepnePrzedmioty){
+            CheckBox cb = new CheckBox(p.getNazwaPrzedmiotu());
+            cb.setStyle("-fx-cursor: hand;");
+            listaPrzedmiotowBox.getChildren().add(cb);
+            mapaCheckBoxow.put(cb, p.getId_przedmiotu());
+        }
+        ScrollPane scroll = new ScrollPane(listaPrzedmiotowBox);
+        scroll.setPrefHeight(200);
+        scroll.setFitToWidth(true);
+        scroll.setStyle("-fx-background-color: transparent; -fx-border-color: transparent;");
+        kontener.getChildren().addAll(new Label("Nazwa klasy:"), nazwaTextField, przedmiotylbl, scroll);
+        dialog.getDialogPane().setContent(kontener);
+
+
+
+//        dialog.showAndWait().ifPresent(nazwa ->{
+//            if(nazwa.trim().isEmpty()){
+//                Alert alert = new Alert(Alert.AlertType.ERROR);
+//                alert.setTitle("Błąd");
+//                alert.setHeaderText("Nazwa klasy nie może być pusta!");
+//                alert.showAndWait();
+//                return;
+//            }
+//            boolean sukces = NauczycielDAO.nowaKlasa(nazwa, zalogowanyEmail);
+//            if(sukces){
+//                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+//                alert.setTitle("Sukces");
+//                alert.setHeaderText("Klasa "+nazwa+ "została utworzona!");
+//                alert.setContentText("Jesteś teraz jej wychowawcą. możesz zacząć dodawać uczniów");
+//                alert.showAndWait();
+//                pokazMenuWychowawcy(true);
+//                pokazUczniow();
+//            }else{
+//                Alert alert = new Alert(Alert.AlertType.ERROR);
+//                alert.setTitle("Błąd");
+//                alert.setHeaderText("Nie udało się utworzyć klasy");
+//                alert.showAndWait();
+//
+//            }
+//        });
     }
 }

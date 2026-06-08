@@ -3,6 +3,7 @@ import dziennik_szkolny.DAO.NauczycielDAO;
 import dziennik_szkolny.DAO.OcenaDAO;
 import dziennik_szkolny.DAO.UczenDAO;
 import dziennik_szkolny.models.*;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -11,6 +12,8 @@ import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+
+import javax.swing.*;
 import java.util.*;
 
 
@@ -761,32 +764,47 @@ public class PanelNauczycielaController {
         kontener.getChildren().addAll(new Label("Nazwa klasy:"), nazwaTextField, przedmiotylbl, scroll);
         dialog.getDialogPane().setContent(kontener);
 
+        Button buttonOk = (Button) dialog.getDialogPane().lookupButton(ButtonType.OK);
+        buttonOk.addEventFilter(ActionEvent.ACTION, e->{
+            boolean cosZaznaczone  = mapaCheckBoxow.keySet().stream().anyMatch(CheckBox::isSelected);
+            if (nazwaTextField.getText().trim().isEmpty() || !cosZaznaczone){
+                e.consume();
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Błąd");
+                alert.setHeaderText("Uzupełnij wszystkie dane!");
+                alert.setContentText("Musisz podać nazwę klasy oraz zaznaczyć przynajmniej jeden przedmiot ");
+                alert.showAndWait();
+            }
 
+        });
+        dialog.showAndWait().ifPresent(wynik ->{
+            if(wynik == ButtonType.OK){
+                String nazwa = nazwaTextField.getText().trim();
+                List<Integer> wybraneId = new ArrayList<>();
+                for(Map.Entry<CheckBox, Integer> entry : mapaCheckBoxow.entrySet()){
+                    if(entry.getKey().isSelected()){
+                        wybraneId.add(entry.getValue());
+                    }
+                }
+                boolean sukces = NauczycielDAO.nowaKlasa(nazwa, zalogowanyEmail, wybraneId);
+                if(sukces){
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Sukces");
+                    alert.setHeaderText("Klasa "+nazwa+ "została utworzona!");
+                    alert.setContentText("Jesteś teraz jej wychowawcą. możesz zacząć dodawać uczniów");
+                    alert.showAndWait();
+                    pokazMenuWychowawcy(true);
+                    pokazUczniow();
+                }else{
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Błąd");
+                    alert.setHeaderText("Nie udało się utworzyć klasy");
+                    alert.showAndWait();
 
-//        dialog.showAndWait().ifPresent(nazwa ->{
-//            if(nazwa.trim().isEmpty()){
-//                Alert alert = new Alert(Alert.AlertType.ERROR);
-//                alert.setTitle("Błąd");
-//                alert.setHeaderText("Nazwa klasy nie może być pusta!");
-//                alert.showAndWait();
-//                return;
-//            }
-//            boolean sukces = NauczycielDAO.nowaKlasa(nazwa, zalogowanyEmail);
-//            if(sukces){
-//                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-//                alert.setTitle("Sukces");
-//                alert.setHeaderText("Klasa "+nazwa+ "została utworzona!");
-//                alert.setContentText("Jesteś teraz jej wychowawcą. możesz zacząć dodawać uczniów");
-//                alert.showAndWait();
-//                pokazMenuWychowawcy(true);
-//                pokazUczniow();
-//            }else{
-//                Alert alert = new Alert(Alert.AlertType.ERROR);
-//                alert.setTitle("Błąd");
-//                alert.setHeaderText("Nie udało się utworzyć klasy");
-//                alert.showAndWait();
-//
-//            }
-//        });
+                }
+            }
+
+        });
+
     }
 }

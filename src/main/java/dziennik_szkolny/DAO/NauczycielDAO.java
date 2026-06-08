@@ -400,10 +400,12 @@ public class NauczycielDAO {
                         rs.getString("nazwa")
                 ));
             }
+            return listaPrzedmiotow;
         }catch (Exception e){
             System.out.println("Błąd podczas pobierania przedmiotow! "+ e.getMessage());
+            return null;
         }
-        return null;
+
     }
 
     public static boolean nowaKlasa(String nazwaKlasy, String emailWychowawcy, List<Integer> idPrzedmiotow) {

@@ -3,6 +3,7 @@ module com.example.dziennik_szkolny {
     requires javafx.fxml;
     requires java.sql;
     requires jbcrypt;
+    requires java.desktop;
 
 
     opens dziennik_szkolny to javafx.fxml;

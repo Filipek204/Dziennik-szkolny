@@ -1,0 +1,40 @@
+/* --- STYLOWANIE WYSKAKUJĄCEGO OKNA (DIALOG) --- */
+
+.nowoczesny-dialog {
+    -fx-background-color: #F8F9FA; /* Lekko szare tło dopasowane do aplikacji */
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* Górny pasek z tekstem (Header) */
+.nowoczesny-dialog > .header-panel {
+    -fx-background-color: #FFFFFF;
+    -fx-padding: 20px;
+}
+
+.nowoczesny-dialog > .header-panel > .label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2B2D42;
+}
+
+/* Pola tekstowe i ComboBoxy */
+.okno-input {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #E2E8F0;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-padding: 5px 10px;
+    -fx-font-size: 14px;
+    -fx-text-fill: #2B2D42;
+}
+
+.okno-input:focused {
+    -fx-border-color: #4361EE; /* Niebieska ramka przy kliknięciu */
+}
+
+/* Etykiety obok pól (np. "Waga:", "Opis:") */
+.nowoczesny-dialog .label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #6C757D;
+    -fx-font-weight: bold;
+}

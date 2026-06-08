@@ -29,30 +29,78 @@ public class UczenDAO {
             return false;
         }
     }
-    public List<Uczen> wszyscyUczniowie(){
-        List<Uczen> uczniowie = new ArrayList<>();
-        String sql = "select * from uczen";
+    public static Uczen daneUcznia(String email){
+        String sql = "select u.id_ucznia, u.imie, u.nazwisko, u.pesel, u.data_urodzenia, u.email, u.numer_telefonu, k.nazwa as klasa from uczen u join klasa k using(id_klasy) where u.email =?";
         try(
             Connection con = DriverManager.getConnection(url);
-            Statement stmt = con.createStatement();
-            ResultSet rs = stmt.executeQuery(sql)
+            PreparedStatement pstmt = con.prepareStatement(sql);
         ){
-            while(rs.next()) {
-                int id = rs.getInt("id_ucznia");
-                String imie = rs.getString("imie");
-                String nazwisko = rs.getString("nazwisko");
-                int id_klasy = rs.getInt("id_klasy");
-                String pesel = rs.getString("pesel");
-                String data_urodzenia = rs.getString("data_urodzenia");
-                String email = rs.getString("email");
-                String haslo = rs.getString("haslo");
-                String numer_telefonu = rs.getString("numer_telefonu");
-                Uczen u = new Uczen(id, imie, nazwisko, id_klasy, pesel, data_urodzenia, email, haslo, numer_telefonu);
-                uczniowie.add(u);
+            pstmt.setString(1, email);
+            ResultSet rs = pstmt.executeQuery();
+            if(rs.next()) {
+
+                return new Uczen(rs.getInt("id_ucznia"),
+                        rs.getString("imie"),
+                        rs.getString("nazwisko"),
+                        rs.getString("pesel"),
+                        rs.getString("data_urodzenia"),
+                        rs.getString("email"),
+                        rs.getString("numer_telefonu"),
+                        rs.getString("klasa")
+
+                );
             }
         }catch(SQLException e){
-            System.out.println("Błąd pobierania uczniów: " + e.getMessage());
+            System.out.println("Błąd pobierania danych ucznia! " + e.getMessage());
         }
-        return uczniowie;
+        return null;
+    }
+    public static List<Uczen> getKlasaWychowawcza( String email){
+        List<Uczen> listauczniow = new ArrayList<>();
+        String sql = "select u.id_ucznia, u.imie, u.nazwisko, u.pesel, u.data_urodzenia, u.email, u.numer_telefonu, k.nazwa as klasa from uczen u join klasa k using(id_klasy) join nauczyciel n using(id_nauczyciela) where n.email =? order by u.nazwisko, u.imie";
+        try(
+                Connection con = DriverManager.getConnection(url);
+                PreparedStatement pstmt = con.prepareStatement(sql);
+        ){
+            pstmt.setString(1, email);
+            ResultSet rs = pstmt.executeQuery();
+            while(rs.next()) {
+
+                listauczniow.add(new Uczen(rs.getInt("id_ucznia"),
+                        rs.getString("imie"),
+                        rs.getString("nazwisko"),
+                        rs.getString("pesel"),
+                        rs.getString("data_urodzenia"),
+                        rs.getString("email"),
+                        rs.getString("numer_telefonu"),
+                        rs.getString("klasa")
+
+                ));
+            }
+        }catch(SQLException e){
+            System.out.println("Błąd pobierania danych ucznia! " + e.getMessage());
+        }
+        return listauczniow;
+    }
+    public static boolean zarejestrujUcznia(String imie, String nazwisko, String pesel, String dataUr, String email, String tel, String haslo){
+        String sqlDodajUcznia = "insert into uczen (imie, nazwisko, pesel, data_urodzenia, email, numer_telefonu, haslo) values (?,?,?,?,?,?, ?)";
+        try(Connection conn = DriverManager.getConnection(url);
+            PreparedStatement pstmt = conn.prepareStatement(sqlDodajUcznia)){
+
+            String zahashowaneHaslo = org.mindrot.jbcrypt.BCrypt.hashpw(haslo, org.mindrot.jbcrypt.BCrypt.gensalt());
+            pstmt.setString(1, imie);
+            pstmt.setString(2, nazwisko);
+            pstmt.setString(3, pesel);
+            pstmt.setString(4, dataUr);
+            pstmt.setString(5, email);
+            pstmt.setString(6, tel);
+            pstmt.setString(7, zahashowaneHaslo);
+
+            return pstmt.executeUpdate()> 0;
+
+        }catch(Exception e){
+            System.out.println("Błąd podczas dodawania ucznia: " + e.getMessage());
+            return false;
+        }
     }
 }

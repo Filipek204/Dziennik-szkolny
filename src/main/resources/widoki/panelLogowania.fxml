@@ -10,10 +10,13 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.ComboBox?>
 <StackPane prefHeight="508.0" prefWidth="700.0" styleClass="tlo" stylesheets="@../style/main.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dziennik_szkolny.controllers.LogowanieController">
  <children>
 
-      <VBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="370.0" prefWidth="350.0" spacing="12.0" style="-fx-background-color: rgba(255, 255, 255, 0.4);" styleClass="szklany-panel" stylesheets="@../style/main.css">
+      <VBox fx:id="panelLogowaniaBox" alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="370.0" prefWidth="350.0" spacing="12.0" styleClass="szklany-panel" stylesheets="@../style/main.css">
           <padding>
               <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
           </padding>
@@ -22,7 +25,7 @@
               <DropShadow color="#00000033" height="30.0" radius="14.5" width="30.0" />
           </effect>
          <children>
-              <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="EduStrefa" textFill="#333333">
+              <Label alignment="CENTER" styleClass="tytul-logowanie" maxWidth="1.7976931348623157E308" text="EduStrefa" textFill="#333333">
                   <font>
                       <Font name="System Bold" size="24.0" />
                   </font>
@@ -47,7 +50,11 @@
                       <Font name="System Bold" size="14.0" />
                   </font>
               </Button>
-      
+             <Hyperlink alignment="CENTER" onAction="#panelRejestracji" maxWidth="1.7976931348623157E308"  text="Nie masz konta? Zarejestruj się" textFill="#007bff">
+                 <font>
+                     <Font size="13.0" />
+                 </font>
+             </Hyperlink>
               <Label textFill="#dc3545">
                   <font>
                       <Font size="12.0" />
@@ -55,5 +62,53 @@
               </Label>
          </children>
       </VBox>
+     <VBox fx:id="panelRejestracjiBox" alignment="CENTER_LEFT" managed="false" maxHeight="-Infinity" maxWidth="-Infinity" prefWidth="420.0" spacing="12.0" styleClass="szklany-panel" visible="false">
+         <padding>
+             <Insets bottom="30.0" left="40.0" right="40.0" top="30.0" />
+         </padding>
+         <effect>
+             <DropShadow color="#00000033" height="30.0" radius="14.5" width="30.0" />
+         </effect>
+         <children>
+             <Label alignment="CENTER" maxWidth="1.7976931348623157E308" styleClass="tytul-logowanie" text="Rejestracja" textFill="#333333">
+                 <font><Font name="System Bold" size="22.0" /></font>
+                 <VBox.margin><Insets bottom="10.0" /></VBox.margin>
+             </Label>
+
+             <ComboBox fx:id="comboRola" maxWidth="1.7976931348623157E308" style="-fx-background-color: #f8f9fa; -fx-border-color: #e0e0e0; -fx-border-radius: 5; -fx-padding: 3;" />
+
+             <HBox spacing="10.0">
+                 <children>
+                     <TextField fx:id="imie" promptText="Imię" style="-fx-background-color: #f8f9fa; -fx-border-color: #e0e0e0; -fx-border-radius: 5; -fx-padding: 8;" HBox.hgrow="ALWAYS" />
+                     <TextField fx:id="nazwisko" promptText="Nazwisko" style="-fx-background-color: #f8f9fa; -fx-border-color: #e0e0e0; -fx-border-radius: 5; -fx-padding: 8;" HBox.hgrow="ALWAYS" />
+                 </children>
+             </HBox>
+
+             <TextField fx:id="email" promptText="Adres e-mail" style="-fx-background-color: #f8f9fa; -fx-border-color: #e0e0e0; -fx-border-radius: 5; -fx-padding: 8;" />
+
+             <HBox spacing="10.0">
+                 <children>
+                     <PasswordField fx:id="haslo" promptText="Hasło" style="-fx-background-color: #f8f9fa; -fx-border-color: #e0e0e0; -fx-border-radius: 5; -fx-padding: 8;" HBox.hgrow="ALWAYS" />
+                     <TextField fx:id="telefon" promptText="Telefon (9 cyfr)" style="-fx-background-color: #f8f9fa; -fx-border-color: #e0e0e0; -fx-border-radius: 5; -fx-padding: 8;" HBox.hgrow="ALWAYS" />
+                 </children>
+             </HBox>
+
+             <HBox fx:id="daneUcznia" spacing="10.0">
+                 <children>
+                     <TextField fx:id="pesel" promptText="PESEL (11 cyfr)" style="-fx-background-color: #f8f9fa; -fx-border-color: #e0e0e0; -fx-border-radius: 5; -fx-padding: 8;" HBox.hgrow="ALWAYS" />
+                     <TextField fx:id="data" promptText="Data (RRRR-MM-DD)" style="-fx-background-color: #f8f9fa; -fx-border-color: #e0e0e0; -fx-border-radius: 5; -fx-padding: 8;" HBox.hgrow="ALWAYS" />
+                 </children>
+             </HBox>
+
+             <Button maxWidth="1.7976931348623157E308" onAction="#zarejestruj" prefHeight="40.0" style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-background-radius: 5; -fx-cursor: hand;" text="Utwórz konto">
+                 <font><Font name="System Bold" size="14.0" /></font>
+                 <VBox.margin><Insets top="10.0" /></VBox.margin>
+             </Button>
+
+             <Hyperlink alignment="CENTER" maxWidth="1.7976931348623157E308" onAction="#panelLogowania" text="Wróć do logowania" textFill="#555555">
+                 <font><Font size="13.0" /></font>
+             </Hyperlink>
+         </children>
+     </VBox>
  </children>
 </StackPane>
